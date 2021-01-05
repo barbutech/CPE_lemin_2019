@@ -1,0 +1,54 @@
+/*
+** EPITECH PROJECT, 2020
+** CPE_lemin_2019
+** File description:
+** The list class.
+*/
+
+#include "list.h"
+#include "object.h"
+#include "node.h"
+#include "type.h"
+#include "base.h"
+
+list *list_construct(type *object_type)
+{
+    list *self = (list *) object_construct(object_type);
+    RETURN_VAL_IF_FAIL(self != NULL, NULL);
+
+    ((object *) self)->finalize = &list_finalize;
+
+    return (self);
+}
+
+list *list_new(void)
+{
+    list *self = list_construct(TYPE_LIST);
+    RETURN_VAL_IF_FAIL(self != NULL, NULL);
+
+    self->head = NULL;
+    self->end = NULL;
+
+    self->size = 0;
+
+    return (self);
+}
+
+type *list_get_type(void)
+{
+    return (type_register(
+        "util.list",
+        sizeof(list),
+        TYPE_OBJECT
+    ));
+}
+
+void list_finalize(object *parent)
+{
+    RETURN_IF_FAIL(parent != NULL);
+    list *self = (list *) parent;
+
+    object_unref((object *) self->head);
+
+    object_finalize(parent);
+}
